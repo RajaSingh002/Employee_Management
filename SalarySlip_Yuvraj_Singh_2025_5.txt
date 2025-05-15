@@ -1,0 +1,9 @@
+===== Salary Slip =====
+Name          : Yuvraj Singh
+Role          : MANAGER
+Month         : 2025-05
+Base Salary   : 200000.00
+Leave Days    : 6
+Deduction     : 38709.68
+Net Salary    : 161290.32
+========================

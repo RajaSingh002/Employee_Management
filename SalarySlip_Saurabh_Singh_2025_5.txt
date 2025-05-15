@@ -1,0 +1,9 @@
+===== Salary Slip =====
+Name          : Saurabh Singh
+Role          : Techlead
+Month         : 2025-05
+Base Salary   : ?20000.00
+Leave Days    : 0
+Deduction     : ?0.00
+Net Salary    : ?20000.00
+========================

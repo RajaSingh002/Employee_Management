@@ -1,0 +1,9 @@
+===== Salary Slip =====
+Name          : fjf fefjk
+Role          : Developer
+Month         : 2025-05
+Base Salary   : 50000.00
+Leave Days    : 4
+Deduction     : 6451.61
+Net Salary    : 43548.39
+========================
