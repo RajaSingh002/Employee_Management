@@ -1,0 +1,9 @@
+===== Salary Slip =====
+Name          : Vishal Thakur
+Role          : Hr
+Month         : 2025-05
+Base Salary   : 12999.00
+Leave Days    : 0
+Deduction     : 0.00
+Net Salary    : 12999.00
+========================

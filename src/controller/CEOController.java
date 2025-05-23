@@ -2,7 +2,6 @@ package controller;
 
 import java.sql.Connection;
 import model.EmployeeModel;
-import utils.Constant;
 import view.EmployeeView;
 
 public class CEOController extends EmployeeController {
@@ -27,10 +26,12 @@ public class CEOController extends EmployeeController {
                     ViewAll();
                     break;
                 case 3:
-                    aService.clockIn(user.getId(), user.getCompanyId());
+
+                    aController.clockIn();
                     break;
                 case 4:
-                    aService.clockOut(user.getId(), user.getCompanyId());
+
+                    aController.clockOut();
                     break;
                 case 5:
                     tController.showAllTimesheets();
@@ -39,7 +40,7 @@ public class CEOController extends EmployeeController {
                     leaveController.approveLeave();
                     break;
                 case 7:
-                  System.out.println(Constant.LOGOUT_SUCCESS); 
+                    EmployeeView.showLogoutSuccess();
                     return false;
                 case 8:
                     aController.showWorkingLogReport();
@@ -53,7 +54,7 @@ public class CEOController extends EmployeeController {
                 case 11:
                     return true;
                 default:
-                    System.out.println(Constant.INVALID_CHOICE);
+                    EmployeeView.showInvalidChoice();
             }
         }
     }

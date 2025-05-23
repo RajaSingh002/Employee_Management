@@ -3,16 +3,14 @@ package view;
 import java.util.Scanner;
 import utils.*;
 
-
 public class RegistrationView {
     Scanner sc = ScannerSingleton.getInstance();
 
-    
     public String getCompanyName() {
         while (true) {
             System.out.println(Constant.ENTER_COMPANY_NAME);
             String name = sc.nextLine().trim();
-            if (Validator.isValidCompanyName(name)) return name;
+            if (Validators.isValidCompanyName(name)) return name;
             System.out.println(Constant.INVALID_COMPANY_NAME);
         }
     }
@@ -21,7 +19,7 @@ public class RegistrationView {
         while (true) {
             System.out.println(Constant.ENTER_FIRST_NAME);
             String name = sc.nextLine().trim();
-            if (Validator.isValidName(name)) return name;
+            if (Validators.isValidName(name)) return name;
             System.out.println(Constant.INVALID_FIRST_NAME);
         }
     }
@@ -30,7 +28,7 @@ public class RegistrationView {
         while (true) {
             System.out.println(Constant.ENTER_LAST_NAME);
             String name = sc.nextLine().trim();
-            if (Validator.isValidName(name)) return name;
+            if (Validators.isValidName(name)) return name;
             System.out.println(Constant.INVALID_LAST_NAME);
         }
     }
@@ -39,7 +37,7 @@ public class RegistrationView {
         while (true) {
             System.out.print(Constant.ENTER_PERSONAL_EMAIL);
             String email = sc.nextLine().trim();
-            if (Validator.isValidEmail(email)) return email;
+            if (Validators.isValidEmail(email)) return email;
             System.out.println(Constant.INVALID_EMAIL);
         }
     }
@@ -48,7 +46,7 @@ public class RegistrationView {
         while (true) {
             System.out.print(Constant.ENTER_USERNAME);
             String name = sc.nextLine().trim();
-            if (Validator.isValidUsername(name)) return name;
+            if (Validators.isValidUsername(name)) return name;
             System.out.println(Constant.INVALID_USERNAME);
         }
     }
@@ -57,7 +55,7 @@ public class RegistrationView {
         while (true) {
             System.out.print(Constant.ENTER_PASSWORD);
             String name = sc.nextLine().trim();
-            if (Validator.isValidPassword(name)) return name;
+            if (Validators.isValidPassword(name)) return name;
             System.out.println(Constant.INVALID_PASSWORD);
         }
     }
@@ -66,7 +64,7 @@ public class RegistrationView {
         while (true) {
             System.out.print(Constant.ENTER_COMPANY_EMAIL);
             String email = sc.nextLine().trim();
-            if (Validator.isValidEmail(email)) return email;
+            if (Validators.isValidEmail(email)) return email;
             System.out.println(Constant.INVALID_EMAIL);
         }
     }
@@ -77,5 +75,18 @@ public class RegistrationView {
 
     public void showRegistrationSuccess() {
         System.out.println(Constant.REGISTRATION_SUCCESS);
+    }
+
+
+    public void showUserNameExistsMessage() {
+        System.out.println(Constant.USER_NAME_ALREADY_EXISTS);
+    }
+
+    public void showEmailExistsMessage() {
+        System.out.println(Constant.EMAIL_ALREADY_EXISTS);
+    }
+
+    public void showLoginFailedMessage() {
+        System.out.println(Constant.LOGIN_FAILED);
     }
 }

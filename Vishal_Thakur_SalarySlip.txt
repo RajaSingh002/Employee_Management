@@ -1,0 +1,5 @@
+Salary Slip
+Employee Name: Vishal Thakur
+Position: Hr
+Base Salary: $12999.0
+Date: 20-05-2025

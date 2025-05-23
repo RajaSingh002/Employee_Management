@@ -19,4 +19,9 @@ public class SalaryView {
         System.out.println(Constant.INVALID_NUMERIC_EMPLOYEE_ID);
     }
 
+    public static void showSalarySlipMessage(String message) {
+    System.out.println(message);
+}
+
+
 }

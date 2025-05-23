@@ -286,70 +286,79 @@ public class EmployeeController {
         }
     }
 
+
     public void generateSalarySlipForEmployee() {
-        Scanner scanner = ScannerSingleton.getInstance();
+    Scanner scanner = ScannerSingleton.getInstance();
 
-        while (true) {
-            SalaryView.SalarySlipEmployeeId();
-            String input = scanner.nextLine().trim();
+    while (true) {
+        SalaryView.SalarySlipEmployeeId();
+        String input = scanner.nextLine().trim();
 
-            if (input.equalsIgnoreCase(Constant.BACK)) {
-                SalaryView.showReturnToMenu();
-                return;
+        if (input.equalsIgnoreCase(Constant.BACK)) {
+            SalaryView.showReturnToMenu();
+            return;
+        }
+
+        try {
+            int empId = Integer.parseInt(input);
+            if (empId < 0) {
+                SalaryView.showNegativeEmployeeIdError();
+                continue;
             }
 
-            try {
-                int empId = Integer.parseInt(input);
-                if (empId < 0) {
-                    SalaryView.showNegativeEmployeeIdError();
-                    continue;
-                }
+            String message = eService.generateSalarySlip(empId, user.getCompanyId());
+            SalaryView.showSalarySlipMessage(message);
+            return;
 
-                eService.generateSalarySlip(empId, user.getCompanyId());
-                return;
-
-            } catch (NumberFormatException e) {
-                SalaryView.showInvalidNumericIdMessage();
-            }
+        } catch (NumberFormatException e) {
+            SalaryView.showInvalidNumericIdMessage();
         }
     }
+}
 
     protected void handleAddSkills() {
-        Scanner sc = ScannerSingleton.getInstance();
-        int empId = user.getId();
+    Scanner sc = ScannerSingleton.getInstance();
+    int empId = user.getId();
 
-        String currentSkills = eService.getEmployeeSkills(empId);
-        SkillView.showCurrentSkillsHeader();
+    String currentSkills = eService.getEmployeeSkills(empId);
+    SkillView.showCurrentSkillsHeader();
 
-        if (currentSkills == null || currentSkills.isBlank()) {
-            SkillView.showNoSkillsMessage();
-        } else {
-            List<String> skillList = Arrays.asList(currentSkills.split(","));
-            SkillView.displaySkillTable(skillList);
-        }
-
-        SkillView.showAllowedSkillsHeader();
-        SkillView.displaySkillTable(Constant.SKILLS);
-
-        SkillView.promptForSkillsToAdd();
-        String input = sc.nextLine().trim();
-        if (input.equalsIgnoreCase(Constant.BACK))
-            return;
-
-        List<String> skills = Arrays.stream(input.split(","))
-                .map(String::trim)
-                .filter(s -> !s.isEmpty())
-                .toList();
-
-        if (skills.isEmpty()) {
-            SkillView.showInvalidSkillInput();
-            return;
-        }
-
-        boolean success = eService.addSkillsToEmployee(empId, skills);
-        if (success) {
-            SkillView.showSkillAdditionSuccess();
-        }
+    if (currentSkills == null || currentSkills.isBlank()) {
+        SkillView.showNoSkillsMessage();
+    } else {
+        List<String> skillList = Arrays.asList(currentSkills.split(","));
+        SkillView.displaySkillTable(skillList);
     }
+
+    SkillView.showAllowedSkillsHeader();
+    SkillView.displaySkillTable(Constant.SKILLS);
+
+    SkillView.promptForSkillsToAdd();
+    String input = sc.nextLine().trim();
+    if (input.equalsIgnoreCase(Constant.BACK))
+        return;
+
+    List<String> skills = Arrays.stream(input.split(","))
+            .map(String::trim)
+            .filter(s -> !s.isEmpty())
+            .toList();
+
+    if (skills.isEmpty()) {
+        SkillView.showInvalidSkillInput();
+        return;
+    }
+
+    List<String> invalid = eService.getInvalidSkills(skills);
+    if (!invalid.isEmpty()) {
+        SkillView.showInvalidSkills(invalid, Constant.SKILLS);
+        return;
+    }
+
+    boolean success = eService.addSkillsToEmployee(empId, skills);
+    if (success) {
+        SkillView.showSkillAdditionSuccess();
+    }
+}
+
 
 }

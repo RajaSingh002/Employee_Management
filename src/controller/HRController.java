@@ -3,7 +3,6 @@ package controller;
 import java.sql.Connection;
 
 import model.EmployeeModel;
-import utils.Constant;
 import view.EmployeeView;
 
 public class HRController extends EmployeeController {
@@ -49,12 +48,12 @@ public class HRController extends EmployeeController {
                     ViewAll();
                     break;
                 case 11:
-                   System.out.println(Constant.LOGOUT_SUCCESS); 
+                  EmployeeView.showLogoutSuccess();
                     return false;
                 case 12:
                   return true;
                 default:
-                     System.out.println(Constant.INVALID_CHOICE);
+                  EmployeeView.showInvalidChoice();
             }
         }
     }

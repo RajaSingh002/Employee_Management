@@ -2,10 +2,12 @@ package controller;
 
 import java.sql.Connection;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.List;
 
-import model.*;
-import service.*;
+import model.AttendanceModel;
+import model.EmployeeModel;
+import service.AttendanceService;
+import service.EmployeeService;
 import utils.Constant;
 import utils.ScannerSingleton;
 import view.AttendanceView;
@@ -19,7 +21,6 @@ public class AttendanceController {
         this.user = user;
         this.aService = new AttendanceService(conn);
         this.eService = new EmployeeService(conn);
-
     }
 
     public void showTodayAttendance() {
@@ -45,12 +46,11 @@ public class AttendanceController {
     }
 
     public void showWorkingLogReport() {
-        Scanner sc = ScannerSingleton.getInstance();
+        var sc = ScannerSingleton.getInstance();
 
         AttendanceView.EmployeeId();
         String input = sc.nextLine().trim();
-        if (input.equalsIgnoreCase(Constant.BACK))
-            return;
+        if (input.equalsIgnoreCase(Constant.BACK)) return;
 
         int empId;
         try {
@@ -70,8 +70,7 @@ public class AttendanceController {
         while (true) {
             AttendanceView.StartDate();
             String fromInput = sc.nextLine().trim();
-            if (fromInput.equalsIgnoreCase(Constant.BACK))
-                return;
+            if (fromInput.equalsIgnoreCase(Constant.BACK)) return;
             try {
                 startDate = LocalDate.parse(fromInput);
                 break;
@@ -84,8 +83,7 @@ public class AttendanceController {
         while (true) {
             AttendanceView.EndDate();
             String toInput = sc.nextLine().trim();
-            if (toInput.equalsIgnoreCase(Constant.BACK))
-                return;
+            if (toInput.equalsIgnoreCase(Constant.BACK)) return;
             try {
                 endDate = LocalDate.parse(toInput);
                 if (endDate.isBefore(startDate)) {
@@ -104,8 +102,27 @@ public class AttendanceController {
             return;
         }
 
-        double total = aService.calculateWorkingHours(logs);
-        AttendanceView.displayWorkingLog(emp.getFirstName(), emp.getLastName(), logs, total);
+        double totalHours = aService.calculateWorkingHours(logs);
+        AttendanceView.displayWorkingLog(emp.getFirstName(), emp.getLastName(), logs, totalHours);
     }
 
+    public void clockIn() {
+        boolean success = aService.clockIn(user.getId(), user.getCompanyId());
+        if (success) {
+           
+            AttendanceView.showClockInSuccess();
+        } else {
+
+            AttendanceView.showAlreadyClockedIn();
+        }
+    }
+
+    public void clockOut() {
+        boolean success = aService.clockOut(user.getId(), user.getCompanyId());
+        if (success) {
+            AttendanceView.showClockOutSuccess();
+        } else {
+            AttendanceView.showClockOutFail();
+        }
+    }
 }

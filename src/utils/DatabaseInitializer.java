@@ -10,7 +10,7 @@ public class DatabaseInitializer {
             createDatabase();
             createTables();
         } catch (Exception e) {
-            System.out.println("Error setting up database: " + e.getMessage());
+            e.getMessage();
         }
     }
 
@@ -22,7 +22,7 @@ public class DatabaseInitializer {
             stmt.executeUpdate(Constant.CREATE_DATABASE);
             stmt.executeUpdate(Constant.USE_DATABASE);
         } catch (Exception e) {
-            System.out.println("Error creating database: " + e.getMessage());
+          e.getMessage();
         }
     }
 
@@ -39,7 +39,7 @@ public class DatabaseInitializer {
             stmt.executeUpdate(Constant.CREATE_LEAVE_REQUESTS_TABLE);
             stmt.executeUpdate(Constant.CREATE_TIMESHEET_TABLE);
         } catch (Exception e) {
-            System.out.println("Error creating tables: " + e.getMessage());
+           e.getMessage();
         }
     }
 

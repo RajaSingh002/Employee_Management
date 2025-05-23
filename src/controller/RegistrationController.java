@@ -1,3 +1,4 @@
+
 package controller;
 
 import java.sql.Connection;
@@ -5,12 +6,22 @@ import java.time.LocalDate;
 
 import model.CompanyModel;
 import model.EmployeeModel;
+import service.AttendanceService;
 import service.CompanySignUp;
+import service.LeaveService;
 import utils.Constant;
 import utils.DatabaseUtil;
 import view.*;
 
 public class RegistrationController {
+    protected EmployeeModel user;
+    protected AttendanceService aService;
+    protected LeaveController leaveController;
+    public CEOController ceoController;
+    public ManagerController mController;
+    public TechLeadController tControlller;
+    public HRController hController;
+    public DeveloperController dController;
     private CompanySignUp companyService = new CompanySignUp();
     private RegistrationView reg = new RegistrationView();
     Connection conn = DatabaseUtil.getConnection();
@@ -25,7 +36,7 @@ public class RegistrationController {
             return;
 
         while (companyService.isUserAlreadyExits(username)) {
-           System.out.println(Constant.USER_NAME_ALREADY_EXISTS);
+            reg.showUserNameExistsMessage();
             username = reg.getUsername();
             if (username.equalsIgnoreCase(Constant.BACK))
                 return;
@@ -52,7 +63,7 @@ public class RegistrationController {
             return;
 
         while (companyService.isEmailAlreadyExits(email)) {
-            System.out.println(Constant.EMAIL_ALREADY_EXISTS);
+            reg.showEmailExistsMessage();
             email = reg.getEmail();
             if (email.equalsIgnoreCase(Constant.BACK))
                 return;
@@ -82,17 +93,29 @@ public class RegistrationController {
     private void promptLoginAndShowMenu(String companyName) {
         LoginView loginView = new LoginView(companyName);
         loginView.showLoginScreen();
+
         while (true) {
             LoginController loginController = new LoginController(companyName);
             EmployeeModel user = loginController.handleLogin();
 
             if (user != null) {
-                MainController controller = new MainController();
-                controller.showDashboard();
+                try (Connection conn = DatabaseUtil.getConnection()) {
+                    MainController controller = new MainController(user);
+                    controller.aService = new AttendanceService(conn);
+                    controller.leaveController = new LeaveController(user, new LeaveService(conn));
+                    controller.ceoController = new CEOController(user, conn);
+                    controller.mController = new ManagerController(user, conn);
+                    controller.tControlller = new TechLeadController(user, conn);
+                    controller.hController = new HRController(user, conn);
+                    controller.dController = new DeveloperController(user, conn);
+
+                    controller.showDashboard();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             } else {
-                System.out.println(Constant.LOGIN_FAILED);
+                reg.showLoginFailedMessage();
             }
         }
-
     }
 }

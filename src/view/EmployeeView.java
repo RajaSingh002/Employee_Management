@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Scanner;
 
 import javax.xml.validation.Validator;
+import utils.Validators;
 
 import model.EmployeeModel;
 import utils.Constant;
@@ -49,6 +50,14 @@ public class EmployeeView {
                 return input;
             System.out.println(Constant.INVALID_EMAIL);
         }
+    }
+
+    public static void showLogoutSuccess() {
+        System.out.println(Constant.LOGOUT_SUCCESS);
+    }
+
+    public static void showInvalidChoice() {
+        System.out.println(Constant.INVALID_CHOICE);
     }
 
     public static double Salary() {
@@ -147,18 +156,47 @@ public class EmployeeView {
     }
 
     public static String Department() {
-        System.out.print(Constant.DEPARTMENT_NAME_INPUT);
-        return sc.nextLine().trim();
+        String input;
+        while (true) {
+            System.out.print(Constant.DEPARTMENT_NAME_INPUT);
+            input = sc.nextLine().trim();
+            if (Validators.isValidName(input)) {
+                break;
+            } else {
+                System.out.println("Invalid department name. Must be 2-30 letters and can include spaces.");
+            }
+        }
+        return input;
     }
 
     public static String Username() {
-        System.out.print(Constant.USERNAME_INPUT);
-        return sc.nextLine().trim();
+        String input;
+        while (true) {
+            System.out.print(Constant.USERNAME_INPUT);
+            input = sc.nextLine().trim();
+            if (Validators.isValidUsername(input)) {
+                break;
+            } else {
+                System.out.println(
+                        "Invalid username. Must be 4-20 characters, include letters, numbers, or underscores, but not only digits or underscores.");
+            }
+        }
+        return input;
     }
 
     public static String Password() {
-        System.out.print(Constant.PASSWORD_INPUT);
-        return sc.nextLine().trim();
+        String input;
+        while (true) {
+            System.out.print(Constant.PASSWORD_INPUT);
+            input = sc.nextLine().trim();
+            if (Validators.isValidPassword(input)) {
+                break;
+            } else {
+                System.out.println(
+                        "Invalid password. Must be 6-20 characters with at least one uppercase letter, one lowercase letter, one digit, and one special character.");
+            }
+        }
+        return input;
     }
 
     public static void showMessage(String msg) {
@@ -315,7 +353,6 @@ public class EmployeeView {
         return sc.nextLine().trim();
     }
 
-  
     public static void showInvalidFirstName() {
         System.out.println(Constant.INVALID_NAME);
     }
@@ -329,8 +366,7 @@ public class EmployeeView {
     }
 
     public static void showDuplicateFieldMessage(String message) {
-     System.out.println("Update failed: " + message);
-}
-
+        System.out.println("Update failed: " + message);
+    }
 
 }

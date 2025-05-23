@@ -14,7 +14,7 @@ public class TimeSheetRepo {
         this.conn = conn;
     }
 
-    public boolean addTimesheet(TimeSheetModel ts) {
+    public boolean addTimesheet(TimeSheetModel ts) throws SQLException{
         try (PreparedStatement stmt = conn.prepareStatement(Constant.INSERT_TIMESHEET)) {
             stmt.setInt(1, ts.getEmpId());
             stmt.setInt(2, ts.getCompanyId());
@@ -28,7 +28,7 @@ public class TimeSheetRepo {
         }
     }
 
-    public List<TimeSheetModel> getAllTimesheetsWithEmployeeInfo(int companyId) {
+    public List<TimeSheetModel> getAllTimesheetsWithEmployeeInfo(int companyId) throws SQLException{
         List<TimeSheetModel> list = new ArrayList<>();
         try (PreparedStatement stmt = conn.prepareStatement(Constant.SELECT_ALL_TIMESHEETS_WITH_EMPLOYEE_INFO)) {
             stmt.setInt(1, companyId);
@@ -51,7 +51,7 @@ public class TimeSheetRepo {
         return list;
     }
 
-    public boolean existsByDate(int empId, int companyId, LocalDate date) {
+    public boolean existsByDate(int empId, int companyId, LocalDate date) throws SQLException{
         try (PreparedStatement ps = conn.prepareStatement(Constant.CHECK_TIMESHEET_EXISTS_BY_DATE)) {
             ps.setInt(1, empId);
             ps.setInt(2, companyId);
@@ -64,7 +64,7 @@ public class TimeSheetRepo {
         }
     }
 
-    public double getTotalHoursForDate(int empId, int companyId, LocalDate date) {
+    public double getTotalHoursForDate(int empId, int companyId, LocalDate date) throws SQLException{
         double total = 0.0;
         try (PreparedStatement stmt = conn.prepareStatement(Constant.GET_TOTAL_HOURS_FOR_DATE)) {
             stmt.setInt(1, empId);

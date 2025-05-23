@@ -1,13 +1,14 @@
 package controller;
 
 import service.LeaveService;
+import service.LeaveService.LeaveApprovalResult;
 import utils.Constant;
 import model.LeaveModel;
 import view.LeaveView;
 import model.EmployeeModel;
 
+import java.time.LocalDate;
 import java.util.List;
-import java.time.*;
 
 public class LeaveController {
     private final LeaveService leaveService;
@@ -20,7 +21,6 @@ public class LeaveController {
         this.leaveView = new LeaveView();
     }
 
-  
     public void applyLeave() {
         LeaveModel leave = leaveView.displayApplyLeaveScreen();
         if (leave == null) {
@@ -35,21 +35,22 @@ public class LeaveController {
             return;
         }
 
-        boolean isSuccess = leaveService.applyLeave(user.getId(),
-                leave.getStartDate().toString(), leave.getEndDate().toString());
+        boolean isSuccess = leaveService.applyLeave(
+                user.getId(),
+                leave.getStartDate().toString(),
+                leave.getEndDate().toString()
+        );
 
-        if (isSuccess) {
-            leaveView.displayMessage(Constant.LEAVE_APPLIED_SUCCESSFULLY);
-        } else {
-            leaveView.displayMessage(Constant.LEAVE_APPLICATION_FAILED );
-        }
+        leaveView.displayMessage(
+                isSuccess ? Constant.LEAVE_APPLIED_SUCCESSFULLY : Constant.LEAVE_APPLICATION_FAILED
+        );
     }
 
     private boolean checkForLeaveOverlap(int empId, LocalDate startDate, LocalDate endDate) {
         List<LeaveModel> approvedLeaves = leaveService.getLeavesByEmployee(empId);
 
         for (LeaveModel leave : approvedLeaves) {
-            if ((startDate.isBefore(leave.getEndDate()) && endDate.isAfter(leave.getStartDate()))) {
+            if (startDate.isBefore(leave.getEndDate()) && endDate.isAfter(leave.getStartDate())) {
                 return true;
             }
         }
@@ -67,18 +68,18 @@ public class LeaveController {
         leaveView.displayPendingLeaves(pendingLeaves);
 
         for (LeaveModel leave : pendingLeaves) {
-            String input = "";
             while (true) {
-                input = leaveView.getApprovalInput(leave.getLeaveId());
-                if ("yes".equals(input)) {
-                    boolean success = leaveService.processLeaveRequest(leave.getLeaveId(), user.getId(), true);
-                    leaveView.displayLeaveStatusUpdate(success ? Constant.LEAVE_APPROVED_SUCCESS
-                            : Constant.LEAVE_STATUS_UPDATE_FAILED );
+                String input = leaveView.getApprovalInput(leave.getLeaveId());
+
+                if ("yes".equalsIgnoreCase(input)) {
+                    LeaveApprovalResult result = leaveService.processLeaveRequest(leave.getLeaveId(), user.getId(), true);
+                    leaveView.displayLeaveApprovalResult(result);
                     break;
-                } else if ("no".equals(input)) {
-                    boolean success = leaveService.processLeaveRequest(leave.getLeaveId(), user.getId(), false);
-                    leaveView.displayLeaveStatusUpdate(success ? Constant.LEAVE_REJECTED_SUCCESS
-                            : Constant.LEAVE_STATUS_UPDATE_FAILED);
+                } else if ("no".equalsIgnoreCase(input)) {
+                    boolean rejected = leaveService.processLeaveRequest(leave.getLeaveId(), user.getId(), false).isProcessed;
+                    leaveView.displayLeaveStatusUpdate(
+                            rejected ? Constant.LEAVE_REJECTED_SUCCESS : Constant.LEAVE_STATUS_UPDATE_FAILED
+                    );
                     break;
                 } else {
                     leaveView.displayMessage(Constant.INVALID_APPROVAL_INPUT);

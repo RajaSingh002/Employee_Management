@@ -64,7 +64,7 @@ public class DuplicateFieldException extends Exception {
         }
     }
 
-    public void update(int empID, EmployeeModel employee) throws DuplicateFieldException {
+    public boolean update(int empID, EmployeeModel employee) throws DuplicateFieldException {
     String checkSql = "SELECT id FROM employees WHERE id = ? AND company_id = ? AND is_active = true";
 
     try (PreparedStatement checkStmt = conn.prepareStatement(checkSql)) {
@@ -73,7 +73,7 @@ public class DuplicateFieldException extends Exception {
 
         try (ResultSet rs = checkStmt.executeQuery()) {
             if (!rs.next()) {
-                return;
+                return false;
             }
         }
 
@@ -95,11 +95,7 @@ public class DuplicateFieldException extends Exception {
             stmt.setInt(11, employee.getCompanyId());
 
             int rowsAffected = stmt.executeUpdate();
-            if (rowsAffected > 0) {
-                System.out.println(Constant.UPDATE_MSG);
-            } else {
-                System.out.println(Constant.UPDATE_FAILED_MSG);
-            }
+            return rowsAffected > 0;
         }
 
     } catch (SQLIntegrityConstraintViolationException e) {
@@ -111,9 +107,9 @@ public class DuplicateFieldException extends Exception {
             throw new DuplicateFieldException("Duplicate value found. Please ensure all unique fields are correct.");
         }
     } catch (SQLException e) {
-        // System.out.println("Error updating employee.");
         e.printStackTrace();
     }
+    return false;
 }
 
 
@@ -345,7 +341,7 @@ public class DuplicateFieldException extends Exception {
                         rs.getDouble("base_salary"));
             }
         } catch (SQLException e) {
-           System.out.println(e.getMessage());
+           e.printStackTrace();
         }
         return null;
     }
@@ -382,7 +378,7 @@ public class DuplicateFieldException extends Exception {
                         rs.getDouble("base_salary"));
             }
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            e.printStackTrace();
         }
         return null;
     }
@@ -409,7 +405,7 @@ public class DuplicateFieldException extends Exception {
                         rs.getDouble("base_salary"));
             }
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+             e.printStackTrace();
         }
         return null;
     }
@@ -443,7 +439,7 @@ public class DuplicateFieldException extends Exception {
                 }
             }
         } catch (SQLException e) {
-            System.out.println( e.getMessage());
+             e.printStackTrace();
         }
 
         return false;
@@ -458,7 +454,7 @@ public class DuplicateFieldException extends Exception {
                 return rs.getString("skills");
             }
         } catch (SQLException e) {
-            System.out.println( e.getMessage());
+            e.printStackTrace();
         }
         return null;
     }

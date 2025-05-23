@@ -32,4 +32,9 @@ public class SkillView {
     public static void showSkillAdditionSuccess() {
         System.out.println(Constant.SKILL_ADDITION_SUCCESS);
     }
+    public static void showInvalidSkills(List<String> invalid, List<String> allowed) {
+    System.out.println("These skills are not allowed: " + String.join(", ", invalid));
+    System.out.println("Only these skills are allowed:\n" + String.join(", ", allowed));
+}
+
 }

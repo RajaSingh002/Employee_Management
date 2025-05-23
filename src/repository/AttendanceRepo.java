@@ -3,6 +3,7 @@ package repository;
 import java.sql.*;
 import java.sql.Date;
 import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.*;
 
 import model.AttendanceModel;
@@ -19,10 +20,7 @@ public class AttendanceRepo {
         this.conn = conn;
     }
 
-   
-  
-
-    public boolean markInTime(AttendanceModel attendance) {
+    public boolean markInTime(AttendanceModel attendance) throws SQLException {
         try (PreparedStatement stmt = conn.prepareStatement(Constant.INSERT_IN_TIME_SQL)) {
             stmt.setInt(1, attendance.getEmpId());
             stmt.setInt(2, attendance.getCompanyId());
@@ -30,14 +28,10 @@ public class AttendanceRepo {
             stmt.setTimestamp(4, Timestamp.valueOf(attendance.getInTime().atDate(LocalDate.now())));
             stmt.setString(5, AttendanceStatus.IN_PROGRESS.name());
             return stmt.executeUpdate() > 0;
-        } catch (SQLException e) {
-            System.out.println(Constant.CLOCKED_IN);
-            e.printStackTrace();
-            return false;
         }
     }
 
-    public AttendanceModel getTodayAttendance(int empId, int companyId) {
+    public AttendanceModel getTodayAttendance(int empId, int companyId) throws SQLException {
         try (PreparedStatement stmt = conn.prepareStatement(Constant.SELECT_TODAY_ATTENDANCE_SQL)) {
             stmt.setInt(1, empId);
             stmt.setInt(2, companyId);
@@ -58,13 +52,11 @@ public class AttendanceRepo {
                 model.setStatus(rs.getString("status"));
                 return model;
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
+            return null;
         }
-        return null;
     }
 
-    public boolean updateOutTimeAndStatus(AttendanceModel model) {
+    public boolean updateOutTimeAndStatus(AttendanceModel model) throws SQLException {
         try (PreparedStatement checkStmt = conn.prepareStatement(Constant.SELECT_OUT_TIME_SQL)) {
             checkStmt.setInt(1, model.getEmpId());
             checkStmt.setInt(2, model.getCompanyId());
@@ -74,8 +66,7 @@ public class AttendanceRepo {
             if (rs.next()) {
                 Timestamp outTimestamp = rs.getTimestamp("out_time");
                 if (outTimestamp != null) {
-                    System.out.println(Constant.CLOCKED_OUT);
-                    return false;
+                    throw new SQLException("Out time already marked for today.");
                 }
             }
 
@@ -87,14 +78,10 @@ public class AttendanceRepo {
                 updateStmt.setDate(5, Date.valueOf(model.getDate()));
                 return updateStmt.executeUpdate() > 0;
             }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
         }
     }
 
-    public List<AttendanceModel> getAttendanceHistory(int companyId) {
+    public List<AttendanceModel> getAttendanceHistory(int companyId) throws SQLException {
         List<AttendanceModel> attendanceList = new ArrayList<>();
         try (PreparedStatement stmt = conn.prepareStatement(Constant.SELECT_ATTENDANCE_HISTORY_SQL)) {
             stmt.setInt(1, companyId);
@@ -119,15 +106,11 @@ public class AttendanceRepo {
                 model.setStatus(rs.getString("status"));
                 attendanceList.add(model);
             }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
-
         return attendanceList;
     }
 
-    public int getPresentDaysInCurrentMonth(int empId, int companyId) {
+    public int getPresentDaysInCurrentMonth(int empId, int companyId) throws SQLException {
         try (PreparedStatement stmt = conn.prepareStatement(Constant.SELECT_PRESENT_DAYS_CURRENT_MONTH_SQL)) {
             stmt.setInt(1, empId);
             stmt.setInt(2, companyId);
@@ -135,13 +118,11 @@ public class AttendanceRepo {
             if (rs.next()) {
                 return rs.getInt(1);
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
+            return 0;
         }
-        return 0;
     }
 
-    public List<AttendanceModel> getAttendanceBetweenDates(int empId, LocalDate startDate, LocalDate endDate) {
+    public List<AttendanceModel> getAttendanceBetweenDates(int empId, LocalDate startDate, LocalDate endDate) throws SQLException {
         List<AttendanceModel> attendanceList = new ArrayList<>();
         try (PreparedStatement stmt = conn.prepareStatement(Constant.SELECT_ATTENDANCE_BETWEEN_DATES_SQL)) {
             stmt.setInt(1, empId);
@@ -157,8 +138,6 @@ public class AttendanceRepo {
                 attendance.setOutTime(rs.getTimestamp("out_time").toLocalDateTime().toLocalTime());
                 attendanceList.add(attendance);
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
         return attendanceList;
     }

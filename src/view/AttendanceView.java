@@ -7,12 +7,12 @@ import utils.Constant;
 
 public class AttendanceView {
     public static void showNoAttendanceForToday() {
-      System.out.println(Constant.TODAY_ATTENDANCE);
+        System.out.println(Constant.TODAY_ATTENDANCE);
     }
 
     public static void displayTodayAttendance(AttendanceModel today) {
-       
-         Constant.View1();
+
+        Constant.View1();
         String inTime = today.getInTime() != null ? today.getInTime().toString() : "N/A";
         String outTime = today.getOutTime() != null ? today.getOutTime().toString() : "N/A";
         String status = today.getStatus();
@@ -22,11 +22,11 @@ public class AttendanceView {
     }
 
     public static void showNoAttendanceHistory() {
-       System.out.println(Constant.NO_ATTENDANCE);
+        System.out.println(Constant.NO_ATTENDANCE);
     }
 
     public static void displayAttendanceHistory(List<AttendanceModel> history) {
-            Constant.View();
+        Constant.View();
         for (AttendanceModel att : history) {
             String empId = "EID " + att.getEmpId();
             String date = att.getDate().toString();
@@ -37,12 +37,10 @@ public class AttendanceView {
             System.out.printf("| %-8s | %-10s | %-19s | %-19s | %-9s |\n", empId, date, inTime, outTime, status);
         }
 
-            System.out.println(Constant.LINE);
+        System.out.println(Constant.LINE);
     }
-  
-    
 
-     public static void EmployeeId() {
+    public static void EmployeeId() {
         System.out.print(Constant.EMPLOYEE_ID);
     }
 
@@ -74,7 +72,8 @@ public class AttendanceView {
         System.out.println(Constant.NO_ATTENDANCE_IN_RANGE);
     }
 
-    public static void displayWorkingLog(String firstName, String lastName, List<AttendanceModel> logs, double totalHours) {
+    public static void displayWorkingLog(String firstName, String lastName, List<AttendanceModel> logs,
+            double totalHours) {
         System.out.println("\nWorking log for " + firstName + " " + lastName);
         System.out.println("---------------------------------------------");
         for (AttendanceModel log : logs) {
@@ -86,6 +85,21 @@ public class AttendanceView {
         }
         System.out.println("Total Hours Worked: " + totalHours);
     }
+
+    public static void showClockInSuccess() {
+        System.out.println("Clock-in successful.");
+    }
+
+    public static void showAlreadyClockedIn() {
+        System.out.println("You have already clocked in today.");
+    }
+
+    public static void showClockOutSuccess() {
+        System.out.println("Clock-out successful.");
+    }
+
+    public static void showClockOutFail() {
+        System.out.println("You have already clocked out today.");
+    }
+
 }
-
-

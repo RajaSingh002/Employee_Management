@@ -4,7 +4,9 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.time.YearMonth;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -30,7 +32,7 @@ public class EmployeeService {
         repo.Add(employee);
     }
 
-    public void updateEmployee(int id, EmployeeModel employee)throws DuplicateFieldException {
+    public void updateEmployee(int id, EmployeeModel employee) throws DuplicateFieldException {
         repo.update(id, employee);
     }
 
@@ -55,7 +57,6 @@ public class EmployeeService {
         EmployeeModel current = employeeMap.get(empId);
 
         if (current == null) {
-            System.out.println("Employee not found.");
             return hierarchy;
         }
 
@@ -95,67 +96,51 @@ public class EmployeeService {
         return repo.getManagers(companyId);
     }
 
-    public void generateSalarySlip(int empId, int companyID) {
+    public String generateSalarySlip(int empId, int companyID) {
         LocalDate currentDate = LocalDate.now();
         int year = currentDate.getYear();
         int month = currentDate.getMonthValue();
 
-        EmployeeModel emp = repo.getActiveEmployeeById(empId, companyID);
-        if (emp == null) {
-            System.out.println("Employee doesn't exist.");
-            return;
-        }
-
-        double baseSalary = emp.getBaseSalary();
-        String name = emp.getFirstName() + " " + emp.getLastName();
-        String role = emp.getPosition();
-
-        long leaveDays = leaveRepo.countApprovedLeavesInMonth(empId, year, month);
-        int totalDays = YearMonth.of(year, month).lengthOfMonth();
-        double perDay = baseSalary / totalDays;
-        double deduction = leaveDays * perDay;
-        double net = baseSalary - deduction;
-
-        String slip = String.format("""
-                ===== Salary Slip =====
-                Name          : %s
-                Role          : %s
-                Month         : %s
-                Base Salary   : %.2f
-                Leave Days    : %d
-                Deduction     : %.2f
-                Net Salary    : %.2f
-                ========================
-                """, name, role, YearMonth.of(year, month), baseSalary, leaveDays, deduction, net);
-
-        System.out.println(slip);
-
-        String fileName = "SalarySlip_" + name.replace(" ", "_") + "_" + year + "_" + month + ".txt";
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName))) {
-            writer.write(slip);
-            System.out.println("Salary slip saved to file: " + fileName);
-        } catch (IOException e) {
-            System.out.println( e.getMessage());
-        }
-    }
-
-    public boolean addSkillsToEmployee(int empId, List<String> skillsToAdd) {
-        List<String> allowed = Constant.SKILLS;
-        List<String> invalid = new ArrayList<>();
-
-        for (String skill : skillsToAdd) {
-            if (!allowed.contains(skill)) {
-                invalid.add(skill);
+        try {
+            EmployeeModel emp = repo.getActiveEmployeeById(empId, companyID);
+            if (emp == null) {
+                return "Employee doesn't exist.";
             }
-        }
 
-        if (!invalid.isEmpty()) {
-            System.out.println("These skills are not allowed: " + String.join(", ", invalid));
-            System.out.println("Only these skills are allowed:\n" + String.join(", ", allowed));
-            return false;
-        }
+            double baseSalary = emp.getBaseSalary();
+            String name = emp.getFirstName() + " " + emp.getLastName();
+            String role = emp.getPosition();
 
-        return repo.addSkills(empId, skillsToAdd);
+            long leaveDays = leaveRepo.countApprovedLeavesInMonth(empId, year, month);
+            int totalDays = YearMonth.of(year, month).lengthOfMonth();
+            double perDay = baseSalary / totalDays;
+            double deduction = leaveDays * perDay;
+            double net = baseSalary - deduction;
+
+            String slip = String.format("""
+                    ===== Salary Slip =====
+                    Name          : %s
+                    Role          : %s
+                    Month         : %s
+                    Base Salary   : %.2f
+                    Leave Days    : %d
+                    Deduction     : %.2f
+                    Net Salary    : %.2f
+                    ========================
+                    """, name, role, YearMonth.of(year, month), baseSalary, leaveDays, deduction, net);
+
+            String fileName = "SalarySlip_" + name.replace(" ", "_") + "_" + year + "_" + month + ".txt";
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName))) {
+                writer.write(slip);
+            } catch (IOException e) {
+                return "Failed to save salary slip file: " + e.getMessage();
+            }
+
+            return "Salary slip generated successfully.\n\n" + slip + "\nSaved to file: " + fileName;
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Database error while generating salary slip", e);
+        }
     }
 
     public String getEmployeeSkills(int empId) {
@@ -164,6 +149,22 @@ public class EmployeeService {
 
     public EmployeeModel getActiveEmployeeById(int empId, int companyID) {
         return repo.getActiveEmployeeById(empId, companyID);
+    }
+
+    public List<String> getInvalidSkills(List<String> skillsToAdd) {
+        List<String> allowed = Constant.SKILLS;
+        List<String> invalid = new ArrayList<>();
+
+        for (String skill : skillsToAdd) {
+            if (!allowed.contains(skill)) {
+                invalid.add(skill);
+            }
+        }
+        return invalid;
+    }
+
+    public boolean addSkillsToEmployee(int empId, List<String> skillsToAdd) {
+        return repo.addSkills(empId, skillsToAdd);
     }
 
 }

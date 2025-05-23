@@ -1,6 +1,7 @@
 package view;
 
 import model.LeaveModel;
+import service.LeaveService;
 import utils.ScannerSingleton;
 import utils.*;
 import java.util.List;
@@ -104,4 +105,27 @@ public class LeaveView {
         System.out.printf(Constant.APPROVE_QUESTION, leaveId);
         return sc.nextLine().trim().toLowerCase();
     }
+
+
+    public void displayLeaveApprovalResult(LeaveService.LeaveApprovalResult result) {
+    if (result == null) {
+        System.out.println("Error: null result received.");
+        return;
+    }
+
+    if (result.isProcessed) {
+        if (result.balanceUpdated) {
+            System.out.println("Leave approved successfully.");
+            System.out.println("Start: " + result.startDate + ", End: " + result.endDate);
+            System.out.println("Days taken: " + result.daysTaken);
+        } else {
+            System.out.println("Leave approved but failed to update leave balance.");
+        }
+    } else {
+        System.out.println("Leave request processing failed.");
+    }
 }
+}
+
+
+

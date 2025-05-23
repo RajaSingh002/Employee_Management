@@ -54,13 +54,13 @@ public class Constant {
         System.out.println("---------------------------------------------------------------------");
     }
 
-    public static void showMainMenu() {
-        System.out.println("\n!! Welcome to Employee Management System !!");
-        System.out.println("1. Sign Up (Register New Company)");
-        System.out.println("2. Login (Already Registered)");
-        System.out.println("3. Exit");
-        System.out.print("Enter your choice: ");
-    }
+ public static final String MAIN_MENU = """
+        ======= Main Menu =======
+        1. Register a new company
+        2. Login
+        3. Exit
+        =========================
+        """;
 
     public static final String LOGOUT_SUCCESS = "Logged Out Successfully";
     public static final String INVALID_CHOICE = "Invalid choice! Please select a valid option.";
@@ -102,7 +102,7 @@ public class Constant {
     public static final String INVALID_NUMERIC_EMPLOYEE_ID = "Invalid input! Please enter a numeric Employee ID or type 'back'.";
 
     public static final String ENTER_COMPANY_NAME = "Enter your company name to register Or (Back): ";
-    public static final String INVALID_COMPANY_NAME = "Invalid company name. Only letters, numbers and spaces allowed (3-50 characters).";
+    public static final String INVALID_COMPANY_NAME = "Invalid company name. Only letters are allowed (3-50 characters).";
 
     public static final String ENTER_FIRST_NAME = "Enter Your First Name  Or (Back):";
     public static final String INVALID_FIRST_NAME = "Invalid last name. Only letters allowed (2-30 characters).";
