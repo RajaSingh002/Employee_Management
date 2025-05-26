@@ -1,3 +1,5 @@
+
+
 package service;
 
 import model.LeaveModel;
@@ -8,19 +10,49 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.List;
 
-public class LeaveService {
-    private LeaveRepo leaveRepo;
+/*
+*********************************************************
+ *  @Class Name     : LeaveService
+ *  @author         : Raja Kumar (raja.kumar@antrazal.com)
+ *  @Company        : Antrazal
+ *  @description    : Contains business logic related to leave
+ *                    application, approval, and balance management
+*********************************************************
+ */
 
+public class LeaveService {
+
+    private final LeaveRepo leaveRepo;
+
+    /*
+    *********************************************************
+     *  @Method Name    : LeaveService (Constructor)
+     *  @author         : Raja Kumar (raja.kumar@antrazal.com)
+     *  @Company        : Antrazal
+     *  @description    : Initializes the LeaveRepo with DB connection
+     *  @param          : Connection connection
+     *  @return         : N/A
+    *********************************************************
+    */
     public LeaveService(Connection connection) {
         this.leaveRepo = new LeaveRepo(connection);
     }
 
+    /*
+    *********************************************************
+     *  @Method Name    : applyLeave
+     *  @author         : Raja Kumar (raja.kumar@antrazal.com)
+     *  @Company        : Antrazal
+     *  @description    : Apply for leave after checking balance
+     *  @param          : int empId, String startDate, String endDate
+     *  @return         : boolean (true if applied successfully)
+    *********************************************************
+    */
     public boolean applyLeave(int empId, String startDate, String endDate) {
         try {
             double currentBalance = leaveRepo.getEmployeeBalance(empId);
             long daysRequested = java.time.temporal.ChronoUnit.DAYS.between(
-                    java.time.LocalDate.parse(startDate),
-                    java.time.LocalDate.parse(endDate)) + 1;
+                    LocalDate.parse(startDate), LocalDate.parse(endDate)) + 1;
 
             if (currentBalance < daysRequested) {
                 return false;
@@ -32,6 +64,16 @@ public class LeaveService {
         }
     }
 
+    /*
+    *********************************************************
+     *  @Method Name    : getLeavesByEmployee
+     *  @author         : Raja Kumar (raja.kumar@antrazal.com)
+     *  @Company        : Antrazal
+     *  @description    : Get all leave records of an employee
+     *  @param          : int empId
+     *  @return         : List<LeaveModel>
+    *********************************************************
+    */
     public List<LeaveModel> getLeavesByEmployee(int empId) {
         try {
             return leaveRepo.getLeavesByEmployee(empId);
@@ -40,6 +82,16 @@ public class LeaveService {
         }
     }
 
+    /*
+    *********************************************************
+     *  @Method Name    : getPendingLeavesToApprove
+     *  @author         : Raja Kumar (raja.kumar@antrazal.com)
+     *  @Company        : Antrazal
+     *  @description    : Get pending leaves assigned to a specific approver
+     *  @param          : int approverId, String role
+     *  @return         : List<LeaveModel>
+    *********************************************************
+    */
     public List<LeaveModel> getPendingLeavesToApprove(int approverId, String role) {
         try {
             return leaveRepo.getPendingLeavesToApprove(approverId, role);
@@ -48,6 +100,16 @@ public class LeaveService {
         }
     }
 
+    /*
+    *********************************************************
+     *  @Method Name    : processLeaveRequest
+     *  @author         : Raja Kumar (raja.kumar@antrazal.com)
+     *  @Company        : Antrazal
+     *  @description    : Approve or reject a pending leave and update balance if needed
+     *  @param          : int leaveId, int approverId, boolean isApproved
+     *  @return         : LeaveApprovalResult
+    *********************************************************
+    */
     public LeaveApprovalResult processLeaveRequest(int leaveId, int approverId, boolean isApproved) {
         try {
             boolean isProcessed = leaveRepo.processLeaveRequest(leaveId, approverId, isApproved);
@@ -70,6 +132,14 @@ public class LeaveService {
         }
     }
 
+    /*
+    *********************************************************
+     *  @Class Name     : LeaveApprovalResult
+     *  @author         : Raja Kumar (raja.kumar@antrazal.com)
+     *  @Company        : Antrazal
+     *  @description    : Encapsulates result of leave approval process
+    *********************************************************
+    */
     public static class LeaveApprovalResult {
         public final boolean isProcessed;
         public final boolean balanceUpdated;
@@ -77,6 +147,16 @@ public class LeaveService {
         public final LocalDate endDate;
         public final long daysTaken;
 
+        /*
+        *********************************************************
+         *  @Constructor    : LeaveApprovalResult
+         *  @author         : Raja Kumar (raja.kumar@antrazal.com)
+         *  @Company        : Antrazal
+         *  @description    : Initializes approval result fields
+         *  @param          : boolean isProcessed, boolean balanceUpdated,
+         *                    LocalDate startDate, LocalDate endDate, long daysTaken
+        *********************************************************
+        */
         public LeaveApprovalResult(boolean isProcessed, boolean balanceUpdated,
                                    LocalDate startDate, LocalDate endDate, long daysTaken) {
             this.isProcessed = isProcessed;

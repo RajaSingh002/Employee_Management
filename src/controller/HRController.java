@@ -5,13 +5,56 @@ import java.sql.Connection;
 import model.EmployeeModel;
 import view.EmployeeView;
 
+/*
+*******************************************************************************************************
+*   @Parent Class Name  : EmployeeController
+*   @Class Name         : HRController
+*   @Author             : <Raja Kumar>(raja.kumar@antrazal.com)
+*   @Company            : Antrazal
+*   @Date               : 26-05-2025
+*   @Description        : Controller for HR role, extends EmployeeController
+*                         Handles HR-specific dashboard and functionalities
+*******************************************************************************************************
+*/
+
 public class HRController extends EmployeeController {
-    protected  AttendanceController aController;
+    protected AttendanceController aController;
+
+    /*
+     *********************************************************
+     * @Method Name : HRController (Constructor)
+     * 
+     * @author : <Raja Kumar>(raja.kumar@antrazal.com)
+     * 
+     * @Company : Antrazal
+     * 
+     * @description : Initializes HRController and AttendanceController
+     * 
+     * @param : EmployeeModel user, Connection conn
+     * 
+     * @return : void
+     ********************************************************
+     */
     public HRController(EmployeeModel user, Connection conn) {
         super(user, conn);
-        this.aController=new AttendanceController(user, conn);
+        this.aController = new AttendanceController(user, conn);
     }
 
+    /*
+     *********************************************************
+     * @Method Name : showHRDashboard
+     * 
+     * @author : <Raja Kumar>(raja.kumar@antrazal.com)
+     * 
+     * @Company : Antrazal
+     * 
+     * @description : Displays HR dashboard menu and processes user input choices
+     * 
+     * @param : none
+     * 
+     * @return : boolean (true to continue, false to logout)
+     ********************************************************
+     */
     public boolean showHRDashboard() {
         while (true) {
             EmployeeView.showHrMenu();
@@ -36,7 +79,7 @@ public class HRController extends EmployeeController {
                     aController.showTodayAttendance();
                     break;
                 case 7:
-                   aController.showAttendanceHistory();
+                    aController.showAttendanceHistory();
                     break;
                 case 8:
                     generateSalarySlipForEmployee();
@@ -48,12 +91,12 @@ public class HRController extends EmployeeController {
                     ViewAll();
                     break;
                 case 11:
-                  EmployeeView.showLogoutSuccess();
+                    EmployeeView.showLogoutSuccess();
                     return false;
                 case 12:
-                  return true;
+                    return true;
                 default:
-                  EmployeeView.showInvalidChoice();
+                    EmployeeView.showInvalidChoice();
             }
         }
     }

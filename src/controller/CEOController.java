@@ -4,6 +4,18 @@ import java.sql.Connection;
 import model.EmployeeModel;
 import view.EmployeeView;
 
+/*
+ *******************************************************************************************************
+ *   @Parent Class Name  :   EmployeeController
+ *   @Class Name         :   CEOController
+ *   @Author             :   raja.kumar@antrazal.com
+ *   @Company            :   Antrazal
+ *   @Date               :   12-05-2025
+ *   @Description        :   Controller class for handling CEO-specific dashboard operations like 
+ *                           hierarchy view, attendance logging, timesheet review, leave approvals, 
+ *                           and employee management.
+ *******************************************************************************************************
+ */
 public class CEOController extends EmployeeController {
     protected AttendanceController aController;
     protected TimeSheetController tController;
@@ -14,10 +26,21 @@ public class CEOController extends EmployeeController {
         this.aController = new AttendanceController(user, conn);
     }
 
+    /*
+     ***************************************************************************************************
+     *  @Method Name       :   showCEODashboard
+     *  @Author            :   raja.kumar@antrazal.com
+     *  @Company           :   Antrazal
+     *  @Description       :   Displays the CEO menu and handles dashboard operations.
+     *                         Returns false on logout, true if switching to admin panel.
+     *  @Return            :   boolean
+     ***************************************************************************************************
+     */
     public boolean showCEODashboard() {
         while (true) {
             EmployeeView.showCEOMenu();
             int choice = EmployeeView.getChoice();
+
             switch (choice) {
                 case 1:
                     showHierarchy();
@@ -26,11 +49,9 @@ public class CEOController extends EmployeeController {
                     ViewAll();
                     break;
                 case 3:
-
                     aController.clockIn();
                     break;
                 case 4:
-
                     aController.clockOut();
                     break;
                 case 5:

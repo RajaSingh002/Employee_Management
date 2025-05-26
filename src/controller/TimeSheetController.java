@@ -11,6 +11,18 @@ import utils.Constant;
 import utils.ScannerSingleton;
 import view.TimeSheetView;
 
+/*
+ *******************************************************************************************************
+ *   @Parent Class Name  :   None
+ *   @Class Name         :   TimeSheetController
+ *   @Author             :   <Raja Kumar>(raja.kumar@antrazal.com)
+ *   @Company            :   Antrazal
+ *   @Date               :   12/05/2025
+ *   @Description        :   Controller class responsible for handling timesheet functionality
+ *                           such as adding timesheet entries and showing all timesheets
+ *                           (restricted to CEO view).
+ *******************************************************************************************************
+ */
 public class TimeSheetController {
     protected final EmployeeModel user;
     private final TimeSheetService tService;
@@ -20,6 +32,18 @@ public class TimeSheetController {
         this.tService = new TimeSheetService(conn);
     }
 
+    /*
+     ***********************************************************************************************
+     * @Method Name : addTimesheet
+     * 
+     * @Author : <Raja Kumar>(raja.kumar@antrazal.com)
+     * 
+     * @Company : Antrazal
+     * 
+     * @Description : Allows an employee to log up to 8 hours of work in their
+     * timesheet
+     ***********************************************************************************************
+     */
     public void addTimesheet() {
         final int empId = user.getId();
         final int companyId = user.getCompanyId();
@@ -50,7 +74,7 @@ public class TimeSheetController {
 
             double hours = -1;
             while (true) {
-                TimeSheetView.HoursWorkedWithRemaining(remainingHours); 
+                TimeSheetView.HoursWorkedWithRemaining(remainingHours);
                 String input = sc.nextLine().trim();
                 if (input.equalsIgnoreCase(Constant.BACK))
                     return;
@@ -88,6 +112,18 @@ public class TimeSheetController {
         }
     }
 
+    /*
+     ***********************************************************************************************
+     * @Method Name : showAllTimesheets
+     * 
+     * @Author : <Raja Kumar>(raja.kumar@antrazal.com)
+     * 
+     * @Company : Antrazal
+     * 
+     * @Description : Displays the complete timesheet history for all employees.
+     * Access restricted to the CEO role.
+     ***********************************************************************************************
+     */
     public void showAllTimesheets() {
         if (!user.getPosition().equals("CEO")) {
             TimeSheetView.showAccessDeniedForTimesheets();
@@ -102,5 +138,4 @@ public class TimeSheetController {
 
         TimeSheetView.displayAllTimesheets(list);
     }
-
 }

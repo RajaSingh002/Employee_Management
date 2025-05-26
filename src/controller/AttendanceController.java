@@ -12,6 +12,15 @@ import utils.Constant;
 import utils.ScannerSingleton;
 import view.AttendanceView;
 
+/**
+ *************************************************************************************************
+ *  @Class Name      :   AttendanceController
+ *  @Author          :   raja.kumar@antrazal.com
+ *  @Company         :   Antrazal
+ *  @Date            :   12/05/2025
+ *  @Description     :   Handles attendance-related operations for the logged-in user.
+ *************************************************************************************************
+ */
 public class AttendanceController {
     protected final EmployeeModel user;
     protected final AttendanceService aService;
@@ -23,6 +32,13 @@ public class AttendanceController {
         this.eService = new EmployeeService(conn);
     }
 
+    /**
+     ********************************************************
+     *  @Method Name    :   showTodayAttendance
+     *  @Author         :   raja.kumar@antrazal.com
+     *  @Description    :   Displays the current day's attendance for the user.
+     ********************************************************
+     */
     public void showTodayAttendance() {
         AttendanceModel today = aService.getTodayAttendance(user.getId(), user.getCompanyId());
 
@@ -34,6 +50,13 @@ public class AttendanceController {
         AttendanceView.displayTodayAttendance(today);
     }
 
+    /**
+     ********************************************************
+     *  @Method Name    :   showAttendanceHistory
+     *  @Author         :   raja.kumar@antrazal.com
+     *  @Description    :   Displays all attendance records for the user's company.
+     ********************************************************
+     */
     public void showAttendanceHistory() {
         List<AttendanceModel> history = aService.getAttendanceHistory(user.getCompanyId());
 
@@ -45,6 +68,13 @@ public class AttendanceController {
         AttendanceView.displayAttendanceHistory(history);
     }
 
+    /**
+     ********************************************************
+     *  @Method Name    :   showWorkingLogReport
+     *  @Author         :   raja.kumar@antrazal.com
+     *  @Description    :   Displays working logs and total hours between dates for a given employee.
+     ********************************************************
+     */
     public void showWorkingLogReport() {
         var sc = ScannerSingleton.getInstance();
 
@@ -106,17 +136,29 @@ public class AttendanceController {
         AttendanceView.displayWorkingLog(emp.getFirstName(), emp.getLastName(), logs, totalHours);
     }
 
+    /**
+     ********************************************************
+     *  @Method Name    :   clockIn
+     *  @Author         :   raja.kumar@antrazal.com
+     *  @Description    :   Records the in-time for the user.
+     ********************************************************
+     */
     public void clockIn() {
         boolean success = aService.clockIn(user.getId(), user.getCompanyId());
         if (success) {
-           
             AttendanceView.showClockInSuccess();
         } else {
-
             AttendanceView.showAlreadyClockedIn();
         }
     }
 
+    /**
+     ********************************************************
+     *  @Method Name    :   clockOut
+     *  @Author         :   raja.kumar@antrazal.com
+     *  @Description    :   Records the out-time for the user.
+     ********************************************************
+     */
     public void clockOut() {
         boolean success = aService.clockOut(user.getId(), user.getCompanyId());
         if (success) {

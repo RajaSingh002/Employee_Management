@@ -1,4 +1,3 @@
-
 package controller;
 
 import java.sql.Connection;
@@ -12,6 +11,15 @@ import utils.DatabaseInitializer;
 import utils.DatabaseUtil;
 import view.MainView;
 
+/*
+*******************************************************************************************************
+*   @Class Name         : MainController
+*   @Author             : <Raja Kumar>(raja.kumar@antrazal.com)
+*   @Company            : Antrazal
+*   @Date               : 26-05-2025
+*   @Description        : Main application controller handling the startup, login, and role-based dashboard flow
+*******************************************************************************************************
+*/
 public class MainController {
     protected EmployeeModel user;
     protected AttendanceService aService;
@@ -23,10 +31,40 @@ public class MainController {
     protected DeveloperController dController;
     private Connection conn;
 
+    /*
+     *********************************************************
+     * @Method Name : MainController (Constructor)
+     * 
+     * @Author : <Raja Kumar>(raja.kumar@antrazal.com)
+     * 
+     * @Company : Antrazal
+     * 
+     * @Description : Initializes MainController with logged-in user model
+     * 
+     * @Param : EmployeeModel user
+     * 
+     * @Return : void
+     ********************************************************
+     */
     public MainController(EmployeeModel user) {
         this.user = user;
     }
 
+    /*
+     *********************************************************
+     * @Method Name : showDashboard
+     * 
+     * @Author : <Raja Kumar>(raja.kumar@antrazal.com)
+     * 
+     * @Company : Antrazal
+     * 
+     * @Description : Routes user to appropriate dashboard based on position
+     * 
+     * @Param : none
+     * 
+     * @Return : boolean true if user chooses to exit to main menu, else false
+     ********************************************************
+     */
     public boolean showDashboard() {
         switch (user.getPosition().toUpperCase()) {
             case "CEO":
@@ -46,6 +84,22 @@ public class MainController {
         return false;
     }
 
+    /*
+     *********************************************************
+     * @Method Name : run
+     * 
+     * @Author : <Raja Kumar>(raja.kumar@antrazal.com)
+     * 
+     * @Company : Antrazal
+     * 
+     * @Description : Main application loop handling company registration, login and
+     * exit
+     * 
+     * @Param : none
+     * 
+     * @Return : void
+     ********************************************************
+     */
     public void run() {
         try (Connection conn = DatabaseUtil.getConnection()) {
             this.conn = conn;
@@ -72,6 +126,22 @@ public class MainController {
         }
     }
 
+    /*
+     *********************************************************
+     * @Method Name : handleLoginFlow
+     * 
+     * @Author : <Raja Kumar>(raja.kumar@antrazal.com)
+     * 
+     * @Company : Antrazal
+     * 
+     * @Description : Handles login process including company verification and user
+     * authentication
+     * 
+     * @Param : CompanySignUp companyService
+     * 
+     * @Return : void
+     ********************************************************
+     */
     private void handleLoginFlow(CompanySignUp companyService) {
         while (true) {
             ClearScreen.getInstance().clearScreen();

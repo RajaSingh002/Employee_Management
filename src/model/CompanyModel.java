@@ -1,15 +1,30 @@
 package model;
 
+/*
+ *******************************************************************************************************
+ *   @Class Name         :   CompanyModel
+ *   @Author             :   <Raja Kumar>(raja.kumar@antrazal.com)
+ *   @Company            :   Antrazal
+ *   @Date               :   12/05/2025
+ *   @Description        :   This model class represents a company entity with fields such as
+ *                           name, username, password, email, and id.
+ *******************************************************************************************************
+ */
 public class CompanyModel {
     private int id;
     private String name, username, password, email;
 
+    /*
+     ***********************************************************************************************
+     *  @Constructor   : CompanyModel(String name, String username, String password, String email)
+     *  @Description   : Initializes a company instance with provided name, username, password and email.
+     ***********************************************************************************************
+     */
     public CompanyModel(String name, String username, String password, String email) {
         this.name = name;
         this.username = username;
         this.password = password;
         this.email = email;
-
     }
 
     public int getId() {
@@ -51,5 +66,4 @@ public class CompanyModel {
     public void setEmail(String email) {
         this.email = email;
     }
-
 }

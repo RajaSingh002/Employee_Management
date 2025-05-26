@@ -1,4 +1,3 @@
-
 package controller;
 
 import java.sql.Connection;
@@ -13,7 +12,18 @@ import utils.Constant;
 import utils.DatabaseUtil;
 import view.*;
 
+/*
+ *******************************************************************************************************
+ *   @Class Name         :   RegistrationController
+ *   @Author             :   <Raja Kumar>(raja.kumar@antrazal.com)
+ *   @Company            :   Antrazal
+ *   @Date               :   12/05/2025
+ *   @Description        :   Handles company registration and CEO onboarding. If company is already 
+ *                           registered, prompts for login. Initializes controller instances after login.
+ *******************************************************************************************************
+ */
 public class RegistrationController {
+
     protected EmployeeModel user;
     protected AttendanceService aService;
     protected LeaveController leaveController;
@@ -22,10 +32,23 @@ public class RegistrationController {
     public TechLeadController tControlller;
     public HRController hController;
     public DeveloperController dController;
+
     private CompanySignUp companyService = new CompanySignUp();
     private RegistrationView reg = new RegistrationView();
     Connection conn = DatabaseUtil.getConnection();
 
+    /*
+     ***********************************************************************************************
+     * @Method Name : startRegistration
+     * 
+     * @Author : <Raja Kumar>(raja.kumar@antrazal.com)
+     * 
+     * @Company : Antrazal
+     * 
+     * @Description : Registers a new company and CEO or redirects to login if
+     * already registered.
+     ***********************************************************************************************
+     */
     public void startRegistration() {
         String Cname = reg.getCompanyName();
         if (Cname.equalsIgnoreCase(Constant.BACK))
@@ -90,6 +113,20 @@ public class RegistrationController {
         }
     }
 
+    /*
+     ***********************************************************************************************
+     * @Method Name : promptLoginAndShowMenu
+     * 
+     * @Author : <Raja Kumar>(raja.kumar@antrazal.com)
+     * 
+     * @Company : Antrazal
+     * 
+     * @Description : Prompts for user login and initializes all controllers based
+     * on role.
+     * 
+     * @Param : companyName - The name of the company for login
+     ***********************************************************************************************
+     */
     private void promptLoginAndShowMenu(String companyName) {
         LoginView loginView = new LoginView(companyName);
         loginView.showLoginScreen();

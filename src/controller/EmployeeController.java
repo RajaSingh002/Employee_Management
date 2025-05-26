@@ -9,6 +9,18 @@ import service.*;
 import utils.*;
 import view.*;
 
+/*
+ *******************************************************************************************************
+ *  @Class Name         :   EmployeeController
+ *  @Author             :   <Raja Kumar>(raja.kumar@antrazal.com)
+ *  @Company            :   Antrazal
+ *  @Date               :   12-05-2025
+ *  @Description        :   Controller class handling employee-related operations including CRUD,
+ *                         hierarchy viewing, salary slip generation, skills management, and 
+ *                         delegating leave management to LeaveController.
+ *******************************************************************************************************
+ */
+
 public class EmployeeController {
     protected final EmployeeModel user;
     private final EmployeeService eService;
@@ -25,6 +37,24 @@ public class EmployeeController {
 
     Scanner sc = ScannerSingleton.getInstance();
 
+    /*
+     *********************************************************
+     * @Method Name : addEmployee
+     * 
+     * @author : <Raja Kumar>(raja.kumar@antrazal.com)
+     * 
+     * @Company : Antrazal
+     * 
+     * @description : Collects input for a new employee, validates uniqueness of
+     * email,
+     * assigns manager based on position, sets initial leave balance,
+     * and delegates creation to EmployeeService.
+     * 
+     * @param : none
+     * 
+     * @return : void
+     ********************************************************
+     */
     public void addEmployee() {
         String firstName, lastName, email, position, departmentName, username, password;
         int managerID;
@@ -114,10 +144,43 @@ public class EmployeeController {
         EmployeeView.showMessage(Constant.EMPLOYEE_ADDED_SUCCESSFULLY);
     }
 
+    /*
+     *********************************************************
+     * @Method Name : ViewAll
+     * 
+     * @author : <Raja Kumar>(raja.kumar@antrazal.com)
+     * 
+     * @Company : Antrazal
+     * 
+     * @description : Fetches and displays all employees of the user's company.
+     * 
+     * @param : none
+     * 
+     * @return : void
+     ********************************************************
+     */
+
     public void ViewAll() {
         List<EmployeeModel> employees = eService.getEmployeesByCompany(user.getCompanyId());
         Constant.printEmployeeTable(employees);
     }
+
+    /*
+     *********************************************************
+     * @Method Name : UpdateEmployee
+     * 
+     * @author : <Raja Kumar>(raja.kumar@antrazal.com)
+     * 
+     * @Company : Antrazal
+     * 
+     * @description : Updates employee details after validating inputs and
+     * handling duplicate fields. Allows skipping fields.
+     * 
+     * @param : none
+     * 
+     * @return : void
+     ********************************************************
+     */
 
     public void UpdateEmployee() {
         String input = EmployeeView.askEmployeeIdToUpdate();
@@ -229,6 +292,23 @@ public class EmployeeController {
 
     }
 
+    /*
+     *********************************************************
+     * @Method Name : DeleteEmployee
+     * 
+     * @author : <Raja Kumar>(raja.kumar@antrazal.com)
+     * 
+     * @Company : Antrazal
+     * 
+     * @description : Deletes (soft delete) an employee by ID after input
+     * validation.
+     * 
+     * @param : none
+     * 
+     * @return : void
+     ********************************************************
+     */
+
     public void DeleteEmployee() {
         while (true) {
             String input = EmployeeView.getEmployeeIdToDelete();
@@ -252,6 +332,24 @@ public class EmployeeController {
             }
         }
     }
+
+    /*
+     *********************************************************
+     * @Method Name : showHierarchy
+     * 
+     * @author : <Raja Kumar>(raja.kumar@antrazal.com)
+     * 
+     * @Company : Antrazal
+     * 
+     * @description : Displays the employee hierarchy starting from the specified
+     * employee ID.
+     * Prevents CEO from viewing own hierarchy.
+     * 
+     * @param : none
+     * 
+     * @return : void
+     ********************************************************
+     */
 
     public void showHierarchy() {
         String input = HierarchyView.getEmployeeIdForHierarchy();
@@ -286,79 +384,111 @@ public class EmployeeController {
         }
     }
 
+    /*
+     *********************************************************
+     * @Method Name : generateSalarySlipForEmployee
+     * 
+     * @author : <Raja Kumar>(raja.kumar@antrazal.com)
+     * 
+     * @Company : Antrazal
+     * 
+     * @description : Prompts for an employee ID and generates salary slip by
+     * calling service.
+     * 
+     * @param : none
+     * 
+     * @return : void
+     ********************************************************
+     */
 
     public void generateSalarySlipForEmployee() {
-    Scanner scanner = ScannerSingleton.getInstance();
+        Scanner scanner = ScannerSingleton.getInstance();
 
-    while (true) {
-        SalaryView.SalarySlipEmployeeId();
-        String input = scanner.nextLine().trim();
+        while (true) {
+            SalaryView.SalarySlipEmployeeId();
+            String input = scanner.nextLine().trim();
 
-        if (input.equalsIgnoreCase(Constant.BACK)) {
-            SalaryView.showReturnToMenu();
-            return;
-        }
-
-        try {
-            int empId = Integer.parseInt(input);
-            if (empId < 0) {
-                SalaryView.showNegativeEmployeeIdError();
-                continue;
+            if (input.equalsIgnoreCase(Constant.BACK)) {
+                SalaryView.showReturnToMenu();
+                return;
             }
 
-            String message = eService.generateSalarySlip(empId, user.getCompanyId());
-            SalaryView.showSalarySlipMessage(message);
-            return;
+            try {
+                int empId = Integer.parseInt(input);
+                if (empId < 0) {
+                    SalaryView.showNegativeEmployeeIdError();
+                    continue;
+                }
 
-        } catch (NumberFormatException e) {
-            SalaryView.showInvalidNumericIdMessage();
+                String message = eService.generateSalarySlip(empId, user.getCompanyId());
+                SalaryView.showSalarySlipMessage(message);
+                return;
+
+            } catch (NumberFormatException e) {
+                SalaryView.showInvalidNumericIdMessage();
+            }
         }
     }
-}
 
+    /*
+     *********************************************************
+     * @Method Name : handleAddSkills
+     * 
+     * @author : <Raja Kumar>(raja.kumar@antrazal.com)
+     * 
+     * @Company : Antrazal
+     * 
+     * @description : Displays current and allowed skills, prompts for skill
+     * addition,
+     * validates inputs, and updates employee skills.
+     * 
+     * @param : none
+     * 
+     * @return : void
+     ********************************************************
+     */
     protected void handleAddSkills() {
-    Scanner sc = ScannerSingleton.getInstance();
-    int empId = user.getId();
+        Scanner sc = ScannerSingleton.getInstance();
+        int empId = user.getId();
 
-    String currentSkills = eService.getEmployeeSkills(empId);
-    SkillView.showCurrentSkillsHeader();
+        String currentSkills = eService.getEmployeeSkills(empId);
+        SkillView.showCurrentSkillsHeader();
 
-    if (currentSkills == null || currentSkills.isBlank()) {
-        SkillView.showNoSkillsMessage();
-    } else {
-        List<String> skillList = Arrays.asList(currentSkills.split(","));
-        SkillView.displaySkillTable(skillList);
+        if (currentSkills == null || currentSkills.isBlank()) {
+            SkillView.showNoSkillsMessage();
+        } else {
+            List<String> skillList = Arrays.asList(currentSkills.split(","));
+            SkillView.displaySkillTable(skillList);
+        }
+
+        SkillView.showAllowedSkillsHeader();
+        SkillView.displaySkillTable(Constant.SKILLS);
+
+        SkillView.promptForSkillsToAdd();
+        String input = sc.nextLine().trim();
+        if (input.equalsIgnoreCase(Constant.BACK))
+            return;
+
+        List<String> skills = Arrays.stream(input.split(","))
+                .map(String::trim)
+                .filter(s -> !s.isEmpty())
+                .toList();
+
+        if (skills.isEmpty()) {
+            SkillView.showInvalidSkillInput();
+            return;
+        }
+
+        List<String> invalid = eService.getInvalidSkills(skills);
+        if (!invalid.isEmpty()) {
+            SkillView.showInvalidSkills(invalid, Constant.SKILLS);
+            return;
+        }
+
+        boolean success = eService.addSkillsToEmployee(empId, skills);
+        if (success) {
+            SkillView.showSkillAdditionSuccess();
+        }
     }
-
-    SkillView.showAllowedSkillsHeader();
-    SkillView.displaySkillTable(Constant.SKILLS);
-
-    SkillView.promptForSkillsToAdd();
-    String input = sc.nextLine().trim();
-    if (input.equalsIgnoreCase(Constant.BACK))
-        return;
-
-    List<String> skills = Arrays.stream(input.split(","))
-            .map(String::trim)
-            .filter(s -> !s.isEmpty())
-            .toList();
-
-    if (skills.isEmpty()) {
-        SkillView.showInvalidSkillInput();
-        return;
-    }
-
-    List<String> invalid = eService.getInvalidSkills(skills);
-    if (!invalid.isEmpty()) {
-        SkillView.showInvalidSkills(invalid, Constant.SKILLS);
-        return;
-    }
-
-    boolean success = eService.addSkillsToEmployee(empId, skills);
-    if (success) {
-        SkillView.showSkillAdditionSuccess();
-    }
-}
-
 
 }
